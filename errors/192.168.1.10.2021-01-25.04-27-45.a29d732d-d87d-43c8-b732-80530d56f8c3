@@ -1,0 +1,21 @@
+(dp1
+S'output'
+p2
+S"<class 'urllib2.HTTPError'> HTTP Error 503: Service Unavailable"
+p3
+sS'layer'
+p4
+S'/home/pi/web2py/applications/planer/controllers/display.py'
+p5
+sS'code'
+p6
+S'# -*- coding: utf-8 -*-\n# try something like\ndef index(): return dict(message="hello from display.py")\n\ndef weather():\n  import urllib2\n  url = "http://wttr.in/Krakow?format=j1"\n  opener = urllib2.build_opener()\n  opener.addheaders = [(\'Accept-Language\', \'pl\')]\n  content = opener.open(url)\n  c = json.loads(content)\n  display_weather()\n  return dict()\nresponse._vars=response._caller(weather)\n'
+p7
+sS'snapshot'
+p8
+(dp9
+sS'traceback'
+p10
+S'Traceback (most recent call last):\n  File "/usr/lib/python2.7/dist-packages/gluon/restricted.py", line 227, in restricted\n    exec ccode in environment\n  File "/home/pi/web2py/applications/planer/controllers/display.py", line 14, in <module>\n  File "/usr/lib/python2.7/dist-packages/gluon/globals.py", line 412, in <lambda>\n    self._caller = lambda f: f()\n  File "/home/pi/web2py/applications/planer/controllers/display.py", line 10, in weather\n    content = opener.open(url)\n  File "/usr/lib/python2.7/urllib2.py", line 435, in open\n    response = meth(req, response)\n  File "/usr/lib/python2.7/urllib2.py", line 548, in http_response\n    \'http\', request, response, code, msg, hdrs)\n  File "/usr/lib/python2.7/urllib2.py", line 473, in error\n    return self._call_chain(*args)\n  File "/usr/lib/python2.7/urllib2.py", line 407, in _call_chain\n    result = func(*args)\n  File "/usr/lib/python2.7/urllib2.py", line 556, in http_error_default\n    raise HTTPError(req.get_full_url(), code, msg, hdrs, fp)\nHTTPError: HTTP Error 503: Service Unavailable\n'
+p11
+s.

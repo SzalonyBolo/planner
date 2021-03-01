@@ -28,7 +28,7 @@ try:
     HRedimage = Image.new('1', (epd.width, epd.height), 255)  # 255: clear the frame
     drawB = ImageDraw.Draw(HBlackimage)
     drawR = ImageDraw.Draw(HRedimage)
-    displayString = "chuju asdf"
+    displayString = "asdfqwerty"
     drawB.text((264 - epd.width, 0), displayString, font = font12, fill = 0)
     #epd.display(epd.getbuffer(Himage))
     epd.display(epd.getbuffer(HBlackimage), epd.getbuffer(HRedimage))

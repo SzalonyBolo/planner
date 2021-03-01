@@ -7,7 +7,7 @@ import datetime
 import json
 import shutil
 
-JSON_DIR_PATH = "./json/"
+JSON_DIR_PATH = "../plans/json/"
 DAILY_TASKS = [
   "zeby",
   "wlosy",
@@ -33,22 +33,29 @@ def generateMetada(points = 1):
   return {"Done": False, "Points": points}
 
 def createNewJsonDay(day):
+  weekly = {"Task": WEEKLY_TASKS[day]}
+  weekly.update(generateMetada(10))
   todayJson = {
     "notes": [],
     "previousDays": [],
-    "weekly": {"Task": [WEEKLY_TASKS[day]]}.update(generateMetada(10)),
+    "weekly": [weekly],
     #"daily": {"Task": DAILY_TASKS, "Done": False, "Points": 1}
     "daily": []
   }
   for dailyTask in DAILY_TASKS:
-    todayJson['daily'].append({'Task': dailyTask}.update(generateMetada(1)))
+    d = {'Task': dailyTask}
+    d.update(generateMetada(1))
+    todayJson["daily"].append(d)
   return todayJson
     
 def saveJsonToFile(filePath, jsonData):
   with open(str(filePath), 'w') as jsonFile:
     json.dump(jsonData, jsonFile, indent=2)
   
-def main():
+def GetAndUpdatePlans():
+  # import pdb
+  # pdb.set_trace()
+
   todayDate = datetime.date.today()
   today = todayDate.strftime("%d.%m.%y")
 
@@ -60,13 +67,12 @@ def main():
     with open(str(todayJsonPathFile), 'r') as todayNote:
       todayJson = json.loads(todayNote.read())
 
-  todayTaskPath = Path('./notes/' + today)
+  todayTaskPath = Path('../plans/notes/' + today)
   if todayTaskPath.is_file():
     with open(str(todayTaskPath), 'r') as todayTasksFile:
       tasksFromFile = todayTasksFile.readlines()
       for fileTask in tasksFromFile:
-        todayJson['notes'].append({'Task': fileTask}.update(generateMetada(10)))
-
-
-if __name__ == "__main__":
-  main()
+        task = {'Task': fileTask}
+        task.update(generateMetada(10))
+        todayJson['notes'].append(task)
+  return todayJson

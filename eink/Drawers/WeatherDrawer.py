@@ -5,17 +5,12 @@ import json
 import os
 import sys
 from pathlib import Path
-import json
 from PIL import Image,ImageDraw,ImageFont
 
 pngdir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'wpng')
 picdir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'pic')
-libdir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'lib')
-if os.path.exists(libdir):
-  sys.path.append(libdir)
-from waveshare_epd import epd2in7b
 
-def display_weather(c):
+def DrawWeather(jsonRoot, width, height):
   #get data
   # url = "http://wttr.in/Krakow?format=j1"
   # req = Request(url)
@@ -29,7 +24,7 @@ def display_weather(c):
   # with open(mockPath) as file:
   # c = json.load(file)
 
-  current = c.get('current_condition')[0]
+  current = jsonRoot.get('current_condition')[0]
   FeelsLike = [current['FeelsLikeC']]
   Temp = [current['temp_C']]
   Humidity = [current['humidity']]
@@ -39,7 +34,7 @@ def display_weather(c):
   Clouds = [current['cloudcover']]
   Wind = [current['windspeedKmph']]
 
-  tommorow = c.get('weather')[1]['hourly'][4]
+  tommorow = jsonRoot.get('weather')[1]['hourly'][4]
   FeelsLike.append(tommorow['FeelsLikeC'])
   Temp.append(tommorow['tempC'])
   Humidity.append(tommorow['humidity'])
@@ -48,7 +43,7 @@ def display_weather(c):
   Clouds.append(tommorow['cloudcover'])
   Wind.append(tommorow['windspeedKmph'])
 
-  aftertommorow = c.get('weather')[2]['hourly'][4]
+  aftertommorow = jsonRoot.get('weather')[2]['hourly'][4]
   FeelsLike.append(aftertommorow['FeelsLikeC'])
   Temp.append(aftertommorow['tempC'])
   Humidity.append(aftertommorow['humidity'])
@@ -65,10 +60,8 @@ def display_weather(c):
   font12 = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 12)
   font18 = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 18)
 
-  epd = epd2in7b.EPD()
-
-  Bimage = Image.new('1', (epd.height, epd.width), 255)  # 255: clear the frame
-  Rimage = Image.new('1', (epd.height, epd.width), 255)  # 255: clear the frame
+  Bimage = Image.new('1', (height, width), 255)  # 255: clear the frame
+  Rimage = Image.new('1', (height, width), 255)  # 255: clear the frame
 
   rdraw = ImageDraw.Draw(Rimage)
   #Headers
@@ -104,25 +97,6 @@ def display_weather(c):
     draw.text((textwidths[i], textheights[4]), str(Humidity[i]) + "%", font = font12, fill = 0)
     draw.text((textwidths[i] - 7, textheights[5]), str(Pressure[i]) + "hPa", font = font12, fill = 0)
 
-  draw.line((0, 127, epd.height, 127), fill = 0)
+  draw.line((0, 127, height, 127), fill = 0)
 
-  try:  
-    epd.init()
-    #epd.Clear(0xFF) #epd2in7
-    epd.Clear() #epd2in7b
-
-    #epd.display(epd.getbuffer(Bimage)) #epd2in7
-    epd.display(epd.getbuffer(Bimage), epd.getbuffer(Rimage)) #epd2in7b
-
-    epd.sleep()
-
-    
-
-  except IOError as e:
-      #logging.info(e)
-      epd2in7b.epdconfig.module_exit()
-
-  except KeyboardInterrupt:    
-      #logging.info("ctrl + c:")
-      epd2in7b.epdconfig.module_exit()
-      #exit()
+  return Bimage, Rimage
